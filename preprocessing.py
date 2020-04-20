@@ -56,4 +56,37 @@ for column in column_names:
     
 #saving the preprocessed data
 data1.to_csv('preprocessed_data.csv')
-    
+
+#shuffling the dataset
+shuffled_dataset=data1.sample(frac=1).reset_index(drop=True)
+
+#splitting the dataset into train set and test set
+from sklearn.model_selection import train_test_split
+train_set,test_set=train_test_split(shuffled_dataset,test_size=0.2,random_state=42)    
+train_set['URL_Type_obf_Type'].value_counts()
+test_set['URL_Type_obf_Type'].value_counts()
+    #splitting further
+train_y=train_set['URL_Type_obf_Type']
+train_x=train_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
+train_x=train_set
+test_y=test_set['URL_Type_obf_Type']
+test_x=test_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
+test_x=test_set
+
+#Feature reduction using PCA
+from sklearn.decomposition import PCA
+pca=PCA()
+pca.fit(train_x)
+cumsum=np.cumsum(pca.explained_variance_ratio_)
+d=np.argmax(cumsum>=0.95)+1
+
+# temp=train_x.isnull().sum()
+# np.where(np.isnan(train_x))
+# np.nan_to_num(train_x)
+
+np.where(train_x.values>=np.finfo(np.float64).max)
+np.isnan(train_x.values.any())
+
+#handling infinite value
+train_x[train_x==np.inf]=np.nan
+train_x.fillna(train_x.mean(),inplace=True)
