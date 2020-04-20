@@ -51,4 +51,9 @@ for column in transformed_data_df.columns:
     data1[column]=transformed_data_df[column]
    
 #checking again if data1 contains any na values or not
-
+for column in column_names:
+    print(data1[column].isnull().values.any())  #Resulted all false value,Now we can move ahead.
+    
+#saving the preprocessed data
+data1.to_csv('preprocessed_data.csv')
+    
