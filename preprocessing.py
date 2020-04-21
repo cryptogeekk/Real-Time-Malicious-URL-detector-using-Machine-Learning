@@ -51,8 +51,8 @@ for column in transformed_data_df.columns:
     data1[column]=transformed_data_df[column]
    
 #checking again if data1 contains any na values or not
-for column in column_names:
-    print(data1[column].isnull().values.any())  #Resulted all false value,Now we can move ahead.
+# for column in column_names:
+#     print(data1[column].isnull().values.any())  #Resulted all false value,Now we can move ahead.
     
 #saving the preprocessed data
 data1[data1==np.inf]==np.nan                #Handling the infinite value with mean value
@@ -79,12 +79,17 @@ test_x=test_set
 train_x[train_x==np.inf]=np.nan
 train_x.fillna(train_x.mean(),inplace=True)
 
-#Feature reduction using PCA
-pd.DataFrame.sort_index(train_x,axis=0,ascending=True,inplace=True)
-from sklearn.decomposition import PCA
-pca=PCA(n_components=0.99)
-train_x_reduced=pca.fit_transform(train_x)
+#sorting on te basis of index
+pd.DataFrame.sort_index(train_x,axis=0,ascending=True,inplace=True) 
+pd.DataFrame.sort_index(train_y,axis=0,ascending=True,inplace=True) 
 
+
+#Feature reduction using PCA
+from sklearn.decomposition import PCA
+pca=PCA(n_components=79)
+train_x_reduced=pca.fit_transform(train_x)
+feature_importance=pca.explained_variance_ratio_
+feature_importance_df=pd.DataFrame(pca.components_,columns=train_x.columns)
 
 
 # temp=train_x.isnull().sum()
@@ -94,4 +99,15 @@ train_x_reduced=pca.fit_transform(train_x)
 # np.where(train_x.values>=np.finfo(np.float64).max)
 # np.isnan(train_x.values.any())
 
+#Encoding the train_y
+train_y=pd.get_dummies(train_y)
 
+
+#finding feature importance
+from scipy.stats import chisquare
+from sklearn.feature_selection import SelectKBest,chi2,f_classif
+k_best=SelectKBest(score_func=f_classif,k=4)
+k_best.fit(train_x,train_y)
+# score=k_best.score_func(train_x,train_y)
+np.set_printoptions(precision=3)
+score1=print(k_best.scores_)
