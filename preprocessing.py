@@ -55,6 +55,8 @@ for column in column_names:
     print(data1[column].isnull().values.any())  #Resulted all false value,Now we can move ahead.
     
 #saving the preprocessed data
+data1[data1==np.inf]==np.nan                #Handling the infinite value with mean value
+data1.fillna(data1.mean(),inplace=True)
 data1.to_csv('preprocessed_data.csv')
 
 #shuffling the dataset
@@ -73,20 +75,23 @@ test_y=test_set['URL_Type_obf_Type']
 test_x=test_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
 test_x=test_set
 
+#handling infinite value
+train_x[train_x==np.inf]=np.nan
+train_x.fillna(train_x.mean(),inplace=True)
+
 #Feature reduction using PCA
+pd.DataFrame.sort_index(train_x,axis=0,ascending=True,inplace=True)
 from sklearn.decomposition import PCA
-pca=PCA()
-pca.fit(train_x)
-cumsum=np.cumsum(pca.explained_variance_ratio_)
-d=np.argmax(cumsum>=0.95)+1
+pca=PCA(n_components=0.99)
+train_x_reduced=pca.fit_transform(train_x)
+
+
 
 # temp=train_x.isnull().sum()
 # np.where(np.isnan(train_x))
 # np.nan_to_num(train_x)
 
-np.where(train_x.values>=np.finfo(np.float64).max)
-np.isnan(train_x.values.any())
+# np.where(train_x.values>=np.finfo(np.float64).max)
+# np.isnan(train_x.values.any())
 
-#handling infinite value
-train_x[train_x==np.inf]=np.nan
-train_x.fillna(train_x.mean(),inplace=True)
+
