@@ -65,8 +65,8 @@ shuffled_dataset=data1.sample(frac=1).reset_index(drop=True)
 #splitting the dataset into train set and test set
 from sklearn.model_selection import train_test_split
 train_set,test_set=train_test_split(shuffled_dataset,test_size=0.2,random_state=42)    
-train_set['URL_Type_obf_Type'].value_counts()
-test_set['URL_Type_obf_Type'].value_counts()
+# train_set['URL_Type_obf_Type'].value_counts()
+# test_set['URL_Type_obf_Type'].value_counts()
     #splitting further
 train_y=train_set['URL_Type_obf_Type']
 train_x=train_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
@@ -81,8 +81,11 @@ train_x.fillna(train_x.mean(),inplace=True)
 
 #sorting on te basis of index
 pd.DataFrame.sort_index(train_x,axis=0,ascending=True,inplace=True) 
-pd.DataFrame.sort_index(train_y,axis=0,ascending=True,inplace=True) 
-
+pd.DataFrame.sort_index(train_y,ascending=True,inplace=True) 
+train_x.drop(['URL_Type_obf_Type'],axis=1,inplace=True)
+pd.DataFrame.sort_index(test_x,axis=0,ascending=True,inplace=True) 
+pd.DataFrame.sort_index(test_y,ascending=True,inplace=True) 
+test_x.drop(['URL_Type_obf_Type'],axis=1,inplace=True)
 
 #Feature reduction using PCA
 from sklearn.decomposition import PCA
@@ -109,5 +112,5 @@ from sklearn.feature_selection import SelectKBest,chi2,f_classif
 k_best=SelectKBest(score_func=f_classif,k=4)
 k_best.fit(train_x,train_y)
 # score=k_best.score_func(train_x,train_y)
-np.set_printoptions(precision=3)
-score1=print(k_best.scores_)
+# np.set_printoptions(precision=3)
+# score1=print(k_best.scores_)
