@@ -106,11 +106,18 @@ feature_importance_df=pd.DataFrame(pca.components_,columns=train_x.columns)
 train_y=pd.get_dummies(train_y)
 
 
-#finding feature importance
+#finding feature importance using Select K best
 from scipy.stats import chisquare
 from sklearn.feature_selection import SelectKBest,chi2,f_classif
-k_best=SelectKBest(score_func=f_classif,k=4)
+k_best=SelectKBest(score_func=f_classif,k=10)
 k_best.fit(train_x,train_y)
-# score=k_best.score_func(train_x,train_y)
-# np.set_printoptions(precision=3)
-# score1=print(k_best.scores_)
+train_new=k_best.fit_transform(train_x,train_y)
+
+score1=k_best.scores_
+    #plotting the graph of scores
+score1_df=pd.DataFrame(score1)  
+score1_df.index=train_x.columns         #gives the feature scores of each attribute
+score1_df.plot.bar(figsize=(20,10))
+sorted_score=score1_df.sort_values(ascending=False,by=0)
+
+#finding feature importance using 
