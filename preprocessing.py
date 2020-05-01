@@ -15,7 +15,7 @@ data=pd.read_csv('All.csv')
 column_names=list(data.columns)
 data['URL_Type_obf_Type'].value_counts()
 
-#creating a category of amlicious and non-malicious
+#creating a category of malicious and non-malicious
 data['category']='malicious'
 data['category'][7930:15711]='non-malicious'
 data['category'].value_counts()
@@ -25,68 +25,66 @@ column_names=list(data.columns)
 column_names.pop(80)
 column_names.pop(79)
 
-#checking if any dataframe columns contain null values or not
-na_values_columns=[]
-for column_names in data:
-    result=data[column_names].isnull().values.any()
-    if result==True:
-        na_values_columns.append(column_names)
-        
-#filling the na column value data with a median value    
-from sklearn.impute import SimpleImputer
-imputer=SimpleImputer(strategy='median')
-# for na_values_columns in data:
-#     imputer.fit_transform(data[[na_values_columns]])
-transformed_data=imputer.fit_transform(data[na_values_columns])
-    
-#checking again if the imputer corrected to the na values or not
-transformed_data_df=pd.DataFrame(transformed_data)
-for column in range(0,8):
-    print(transformed_data_df[column].isnull().values.any())
-    #resulted all false value,now we know that simple imputer worked
-    
-#putting back the transofrmed data to the original data
-transformed_data_df.columns=na_values_columns
-data1=data.copy()
-for column in transformed_data_df.columns:
-    data1[column]=transformed_data_df[column]
-   
-#checking again if data1 contains any na values or not
-# for column in column_names:
-#     print(data1[column].isnull().values.any())  #Resulted all false value,Now we can move ahead.
-    
-#saving the preprocessed data
-data1[data1==np.inf]==np.nan                #Handling the infinite value with mean value
-data1.fillna(data1.mean(),inplace=True)
-# data1.to_csv('preprocessed_data.csv')
+#shuffling the dataframe
+shuffled_dataset=data.sample(frac=1).reset_index(drop=True)
 
-#shuffling the dataset
-shuffled_dataset=data1.sample(frac=1).reset_index(drop=True)
+#dropping the categorical value
+# categorical_data=shuffled_dataset[['URL_Type_obf_Type','category']]
+# data1=shuffled_dataset.drop(['URL_Type_obf_Type','category'],axis=1)
+
+#checking for na and inf values
+shuffled_dataset.replace([np.inf,-np.inf],np.nan,inplace=True)                  #handling the infinite value
+shuffled_dataset.fillna(shuffled_dataset.mean(),inplace=True)                   #handling the na value
+
+#checking if any value in data1 now contains infinite and null value or not
+null_result=shuffled_dataset.isnull().any(axis=0)
+inf_result=shuffled_dataset is np.inf
+
+#scaling the dataset with standard scaler
+shuffled_x=shuffled_dataset.drop(['URL_Type_obf_Type','category'],axis=1)
+shuffled_y=shuffled_dataset[['URL_Type_obf_Type','category']]
+from sklearn.preprocessing import StandardScaler
+sc_x=StandardScaler()
+shuffled_dataset_scaled=sc_x.fit_transform(shuffled_x)
+shuffled_dataset_scaled=pd.DataFrame(shuffled_dataset_scaled)
+shuffled_dataset_scaled.columns=shuffled_x.columns
+dataset_final=pd.concat([shuffled_dataset_scaled,shuffled_y],axis=1)
+dataset_final.drop(['ISIpAddressInDomainName'],inplace=True,axis=1)   #dropping this column since it always contain zero
+
+#Preparing the dataset with the reduced features of K-Best
+# reduced_features=['SymbolCount_Domain','domain_token_count','tld','Entropy_Afterpath','NumberRate_AfterPath','ArgUrlRatio','domainUrlRatio','URLQueries_variable','SymbolCount_FileName','delimeter_Count','argPathRatio','delimeter_path','pathurlRatio','SymbolCount_Extension','SymbolCount_URL','NumberofDotsinURL','Arguments_LongestWordLength','SymbolCount_Afterpath','CharacterContinuityRate','domainlength']
+# reduced_features.append('URL_Type_obf_Type')
+# reduced_features.append('category')
+# shuffled_dataset1=shuffled_dataset[reduced_features]
+
+
+
 
 #splitting the dataset into train set and test set
 from sklearn.model_selection import train_test_split
-train_set,test_set=train_test_split(shuffled_dataset,test_size=0.2,random_state=42)    
-# train_set['URL_Type_obf_Type'].value_counts()
-# test_set['URL_Type_obf_Type'].value_counts()
-    #splitting further
-train_y=train_set['URL_Type_obf_Type']
+train_set,test_set=train_test_split(dataset_final,test_size=0.2,random_state=42)  
+    #sorting the train_set and test set
+pd.DataFrame.sort_index(train_set,axis=0,ascending=True,inplace=True) 
+pd.DataFrame.sort_index(test_set,axis=0,ascending=True,inplace=True) 
+    #splitting further ito train_x,train_y,test_x,test_x                        ----Multiclass classification-----
+train_y=train_set['URL_Type_obf_Type']                                          #train data for binary classification
+train_y_binary=train_set['category']        
 train_x=train_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
 train_x=train_set
 test_y=test_set['URL_Type_obf_Type']
+test_y_binary=test_set['category']                                              #test data for binary classsification
 test_x=test_set.drop(['URL_Type_obf_Type','category'],axis=1,inplace=True)
 test_x=test_set
 
-#handling infinite value
-train_x[train_x==np.inf]=np.nan
-train_x.fillna(train_x.mean(),inplace=True)
-
-#sorting on the basis of index
-pd.DataFrame.sort_index(train_x,axis=0,ascending=True,inplace=True) 
-pd.DataFrame.sort_index(train_y,ascending=True,inplace=True) 
-train_x.drop(['URL_Type_obf_Type'],axis=1,inplace=True)
-pd.DataFrame.sort_index(test_x,axis=0,ascending=True,inplace=True) 
-pd.DataFrame.sort_index(test_y,ascending=True,inplace=True) 
-test_x.drop(['URL_Type_obf_Type'],axis=1,inplace=True)
+#Encoding the categorical variables
+    #for SVM classification
+train_y_svm=train_y  
+test_y_svm=test_y
+    #for other types of classification
+train_y=pd.get_dummies(train_y)
+train_y_binary=pd.get_dummies(train_y_binary)
+test_y=pd.get_dummies(test_y)
+test_y_binary_num=pd.get_dummies(test_y_binary)
 
 #Feature reduction using PCA
 # from sklearn.decomposition import PCA
@@ -103,9 +101,7 @@ test_x.drop(['URL_Type_obf_Type'],axis=1,inplace=True)
 # np.where(train_x.values>=np.finfo(np.float64).max)
 # np.isnan(train_x.values.any())
 
-#Encoding the train_y
-train_y_svm=train_y         #creating tarin_y without encoding for SVM since svm donot support multiclass classification
-train_y=pd.get_dummies(train_y)
+
 
 
 #finding feature importance using Select K best
@@ -121,6 +117,9 @@ score1_df=pd.DataFrame(score1)
 score1_df.index=train_x.columns         #gives the feature scores of each attribute
 score1_df.plot.bar(figsize=(20,10))
 sorted_score=score1_df.sort_values(ascending=False,by=0)
+    #top 20 feature
+kboost_score_top_20=list(sorted_score[:20].index)
+
 
 #finding feature importance using Random forest classifier
 from sklearn.ensemble import RandomForestClassifier
@@ -151,8 +150,10 @@ for feature in rnd_score_top_20:
 #feature reduction with backward feature elimination technique
 from sklearn.feature_selection import RFE
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.svm import LinearSVC
-estimator=LinearSVC()
+
+from sklearn.svm import SVC
+estimator=OneVsRestClassifier(SVC(kernel='rbf',gamma=5,C=1000))
+# estimator=LinearSVC()
 selector=RFE(estimator,5)
 selector=selector.fit(train_x,train_y_svm)
 RFE_score=selector.ranking_
