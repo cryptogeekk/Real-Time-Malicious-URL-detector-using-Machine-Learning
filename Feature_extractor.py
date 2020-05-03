@@ -14,7 +14,9 @@ dataset_phishing_url_modified=dataset_phishing_url_original['URL']
 phising_columns=['domain_token_count','tld','urlLen','domainlength','fileNameLen','domainUrlRatio','NumberofDotsinURL','Query_DigitCount','LongestPathTokenLength','delimeter_Domain','delimeter_path','SymbolCount_Domain','Entropy_Domain','URL_Type_obf_Type']
 
 # domain_token_count(data1.iloc[1])
-# sent_tokenize(data1.iloc[1])    
+# sent_tokenize(data1.iloc[1])   
+url=dataset_phishing_url_modified[0]   #Remove this code while compiling all code
+url1='http://clubeamigosdopedrosegundo.com.br/last/'
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
 column_names=dataset_phising_all.columns
@@ -39,4 +41,17 @@ def domain_token_count(url):
 for url in dataset_phishing_url_modified:
     domain_token_count(url)
 
-#function for tld
+#function for tld count
+index=0
+def domain_token_count(url):
+    global index
+    tld_count=0
+    splitted_text=url.split('.')
+    
+domain_list=['com','ar']
+count=0
+for domain in domain_list:
+    if domain_list in splitted_text1[1]:
+        count=count+1
+
+'br' in splitted_text1[1]
