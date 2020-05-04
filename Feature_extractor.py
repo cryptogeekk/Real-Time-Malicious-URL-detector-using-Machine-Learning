@@ -16,7 +16,11 @@ phising_columns=['domain_token_count','tld','urlLen','domainlength','fileNameLen
 # domain_token_count(data1.iloc[1])
 # sent_tokenize(data1.iloc[1])   
 url=dataset_phishing_url_modified[0]   #Remove this code while compiling all code
-url1='http://clubeamigosdopedrosegundo.com.br/last/'
+url='http://clubeamigosdopedrosegundo.com.br/last/'
+url2='http://blogger.com.buses-forsale.co.za/sq/index.php?bshowgif=0&amp'
+url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc6v3dx2s5j9uk1xble4efc1m3dxk21k3v5ch95den4m39d1sv2h.balihoo.gr/account/webxscr.html?cmd=2615d80a13c0db1f22d2300ef60a67593b79a4d03747447e6b625t28d36121s1cd82730257d4ffad785277a59c2209'
+
+
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
 column_names=dataset_phising_all.columns
@@ -43,15 +47,30 @@ for url in dataset_phishing_url_modified:
 
 #function for tld count
 index=0
-def domain_token_count(url):
+top_level_domains=pd.read_csv('top-level-domain-names.csv')
+domain_list=top_level_domains['Domain'].tolist()
+domain_list1=[]
+    #function to remove . from domain names
+for domain in domain_list:
+    splitted_domain=domain.split('.')
+    domain_list1.append(splitted_domain[1])
+    
+
+def tld__count(url):
     global index
     tld_count=0
-    splitted_text=url.split('.')
+    splitted_text1=url.split('/')
+    splitted_text2=splitted_text1[2].split('.')
     
-domain_list=['com','ar']
-count=0
-for domain in domain_list:
-    if domain_list in splitted_text1[1]:
-        count=count+1
+    for domain in splitted_text2:
+        if domain in domain_list1:
+            tld_count=tld_count+1  
+    # print(tld_count)
+    dataset_13['tld'].iloc[index]=tld_count
+    index=index+1
+            
+#creating a dataset for tld_count
+for url in dataset_phishing_url_modified:
+    tld__count(url)
+    
 
-'br' in splitted_text1[1]
