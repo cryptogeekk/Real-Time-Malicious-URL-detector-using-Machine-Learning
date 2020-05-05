@@ -19,7 +19,7 @@ url=dataset_phishing_url_modified[0]   #Remove this code while compiling all cod
 url='http://clubeamigosdopedrosegundo.com.br/last/'
 url2='http://blogger.com.buses-forsale.co.za/sq/index.php?bshowgif=0&amp'
 url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc6v3dx2s5j9uk1xble4efc1m3dxk21k3v5ch95den4m39d1sv2h.balihoo.gr/account/webxscr.html?cmd=2615d80a13c0db1f22d2300ef60a67593b79a4d03747447e6b625t28d36121s1cd82730257d4ffad785277a59c2209'
-
+url4=url_list_2[0]
 
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
@@ -139,6 +139,125 @@ def number_of_dots(url):
 for url in dataset_phishing_url_modified:
     number_of_dots(url)
     
-         
+#----------------------------digits in query--------------------------------------------------------
+# index7=0
+temp_list=[]
+url_list_2=[]
+def number_of_dots(url):
+    # global index7
+    count=0
+    for character in url:
+        if character=='?':
+            count=count+1
+    temp_list.append(count)
+    if count==2:
+        url_list_2.append(url)
+        
+    # index6=index7+1
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    number_of_dots(url)
+    
+    
+temp_list_df=pd.DataFrame(temp_list)
+temp_list_df[0].value_counts()
+data_initial_13['Query_DigitCount'].value_counts()
 
+#------------------------digits in query #I may have mistake in this-------------------------------------------------------------
+def search(content_first):
+    count=0
+    for char in content_first:
+        if char.isdigit():
+            count=count+1
+    return count
+                                                    
 
+index7=0
+def digits_in_query(url):
+    global index7
+    count_question_mark=0
+    count=0
+    for character in url:
+        if character=='?':
+            count_question_mark=count_question_mark+1
+    
+    if count_question_mark==0:
+        dataset_13['Query_DigitCount'].iloc[index7]=0
+            
+    elif count_question_mark==1:
+        content=url.split('?')
+        if '&' in content[1]:
+            content_first=content[1].split('&')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        elif ';' in content[1]:
+            content_first=content[1].split(';')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        else:
+            count=search(content[1])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+            
+    elif count_question_mark==2:
+        content=url.split('?')
+        if '&' in content[1]:
+            content_first=content[1].split('&')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        elif ';' in content[1]:
+            content_first=content[1].split(';')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        else:
+            count=search(content[1])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+
+        if '&' in content[2]:
+            content_first=content[2].split('&')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        elif ';' in content[2]:
+            content_first=content[2].split(';')
+            count=search(content_first[0])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+        else:
+            count=search(content[2])
+            if count>0:
+                dataset_13['Query_DigitCount'].iloc[index7]=count
+            else:
+                dataset_13['Query_DigitCount'].iloc[index7]=-1
+    
+    index7=index7+1
+
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    digits_in_query(url)
+    
+dataset_13['Query_DigitCount'].value_counts()
+            
+        
+            
