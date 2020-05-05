@@ -23,8 +23,9 @@ url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc
 
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
-column_names=dataset_phising_all.columns
 data_initial_13=dataset_phising_all[phising_columns]
+column_names=data_initial_13.columns
+
 
 #Creating an empty dataset with 13 faetures
 dataset_13=pd.DataFrame(0,index=np.arange(len(dataset_phishing_url_modified)),columns=phising_columns)
@@ -112,13 +113,32 @@ index5=0
 def domain_url_ratio(url):
     global index5
     ratio=0
-    
-    for domainlen,urllen in zip(dataset_13['domainlength'].iloc[index5],data_initial_13['urlLen'].iloc[index5]):
-        print(domainlen,urllen)
-        ratio=domainlen/urllen
-    dataset_13['domainUrlRatio'].iloc[index5]=ratio
-    index=index+1
+
+    for domain,url in zip(dataset_13['domainlength'],data_initial_13['urlLen']):
+        ratio=domain/url
+        dataset_13['domainUrlRatio'].iloc[index5]=ratio
+        index5=index5+1
     
 #creating a dataset
 for url in dataset_phishing_url_modified:
     domain_url_ratio(url)
+
+#-------------------------------Numberof dots in URL-------------------------------------------------
+index6=0
+def number_of_dots(url):
+    global index6
+    
+    count=0
+    for character in url:
+        if character=='.':
+            count=count+1
+    dataset_13['NumberofDotsinURL'].iloc[index6]=count
+    index6=index6+1
+    
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    number_of_dots(url)
+    
+         
+
+
