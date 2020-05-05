@@ -24,29 +24,29 @@ url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
 column_names=dataset_phising_all.columns
-# data3=data2[phising_columns]
+data_initial_13=dataset_phising_all[phising_columns]
 
 #Creating an empty dataset with 13 faetures
 dataset_13=pd.DataFrame(0,index=np.arange(len(dataset_phishing_url_modified)),columns=phising_columns)
 
-#function for  domain count
-index=0
+#---------------------------------------function for domain token count----------------------------------------------
+index1=0
 def domain_token_count(url):
-    global index
+    global index1
     token_count=0
     for char in url:
         if char=='/':
             token_count=token_count+1
     token_count=token_count-2
-    dataset_13['domain_token_count'].iloc[index]=token_count
-    index=index+1
+    dataset_13['domain_token_count'].iloc[index1]=token_count
+    index1=index1+1
 
 # creating a dataset for domain_token_count
 for url in dataset_phishing_url_modified:
     domain_token_count(url)
 
-#function for tld count
-index=0
+#---------------------------------------function for tld count------------------------------------------------
+index2=0
 top_level_domains=pd.read_csv('top-level-domain-names.csv')
 domain_list=top_level_domains['Domain'].tolist()
 domain_list1=[]
@@ -57,7 +57,7 @@ for domain in domain_list:
     
 
 def tld__count(url):
-    global index
+    global index2
     tld_count=0
     splitted_text1=url.split('/')
     splitted_text2=splitted_text1[2].split('.')
@@ -66,11 +66,59 @@ def tld__count(url):
         if domain in domain_list1:
             tld_count=tld_count+1  
     # print(tld_count)
-    dataset_13['tld'].iloc[index]=tld_count
-    index=index+1
+    dataset_13['tld'].iloc[index2]=tld_count
+    index2=index2+1
             
 #creating a dataset for tld_count
 for url in dataset_phishing_url_modified:
     tld__count(url)
     
+#-----------------------------------function for URL len---------------------------------------------------------
+index3=0
+def url_length(url):
+    global index3
+    count_length=0
+    for character in url:
+        count_length=count_length+1
+        
+    dataset_13['urlLen'].iloc[index3]=count_length
+    index3=index3+1
 
+#creating a dataset for url_length
+for url in dataset_phishing_url_modified:
+    url_length(url)
+    
+#-------------------------------function to create domain length--------------------------------------------------
+index4=0
+def domain_length_count(url):
+    global index4
+    domain_length=0
+    splitted_text3=url.split('/')
+    splitted_text4=splitted_text3[2].split('.')
+    
+    for domain in splitted_text4:
+        if domain in domain_list1:
+            domain_length=domain_length+len(domain)
+    # print(domain_length)
+    dataset_13['domainlength'].iloc[index4]=domain_length
+    index4=index4+1 
+
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    domain_length_count(url)
+    
+#------------------------------function to create domain to URL ratio--------------------------------------------
+index5=0
+def domain_url_ratio(url):
+    global index5
+    ratio=0
+    
+    for domainlen,urllen in zip(dataset_13['domainlength'].iloc[index5],data_initial_13['urlLen'].iloc[index5]):
+        print(domainlen,urllen)
+        ratio=domainlen/urllen
+    dataset_13['domainUrlRatio'].iloc[index5]=ratio
+    index=index+1
+    
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    domain_url_ratio(url)
