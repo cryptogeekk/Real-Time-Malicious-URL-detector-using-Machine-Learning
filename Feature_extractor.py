@@ -19,7 +19,7 @@ url=dataset_phishing_url_modified[0]   #Remove this code while compiling all cod
 url='http://clubeamigosdopedrosegundo.com.br/last/'
 url2='http://blogger.com.buses-forsale.co.za/sq/index.php?bshowgif=0&amp'
 url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc6v3dx2s5j9uk1xble4efc1m3dxk21k3v5ch95den4m39d1sv2h.balihoo.gr/account/webxscr.html?cmd=2615d80a13c0db1f22d2300ef60a67593b79a4d03747447e6b625t28d36121s1cd82730257d4ffad785277a59c2209'
-url4=url_list_2[0]
+# url4=url_list_2[0]
 
 
 dataset_phising_all=pd.read_csv('Phishing.csv')
@@ -259,5 +259,49 @@ for url in dataset_phishing_url_modified:
     
 dataset_13['Query_DigitCount'].value_counts()
             
-        
-            
+#-------------------Function for longest path token length------------------------------------
+index8=0
+temp_list=[]
+def slash__count(url):
+    count=0
+    for char in url:
+        if char=='/':
+            count=count+1
+    count=count-2
+    # temp_list.append(count)
+    return count
+    
+
+def find_length(url):
+    count=0
+    for char in url:
+        count=count+1
+    return count
+
+def path_length_attach(url,slash_count):
+    i=0
+    length_list=[]
+    content=url.split('/')
+    for i in range(0,slash_count):
+        length_list.append(find_length(content[i+3]))
+
+    if len(length_list)==0:
+        return 0
+    else:
+        maximum_length=max(length_list)
+        return maximum_length
+                       
+
+def path_length(url):
+    global index8
+    slash_count=slash__count(url)
+    length=path_length_attach(url,slash_count)
+    dataset_13['LongestPathTokenLength'].iloc[index8]=length
+    index8=index8+1
+    
+#creating a dataset 
+for url in dataset_phishing_url_modified:
+    path_length(url)
+    
+
+
