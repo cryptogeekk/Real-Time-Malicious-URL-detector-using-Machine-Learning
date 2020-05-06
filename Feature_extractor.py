@@ -16,7 +16,7 @@ phising_columns=['domain_token_count','tld','urlLen','domainlength','fileNameLen
 # domain_token_count(data1.iloc[1])
 # sent_tokenize(data1.iloc[1])   
 url=dataset_phishing_url_modified[0]   #Remove this code while compiling all code
-url='http://clubeamigosdopedrosegundo.com.br/last/'
+url1='http://clubeamigosdopedrosegundo.com.br/last/'
 url2='http://blogger.com.buses-forsale.co.za/sq/index.php?bshowgif=0&amp'
 url3='http://updatepaypal.c0m.uk.d4ps1s5u3xo5t2c6v2kn3fz7c9y5u2v5u2rf3o5x1x0.zfc6v3dx2s5j9uk1xble4efc1m3dxk21k3v5ch95den4m39d1sv2h.balihoo.gr/account/webxscr.html?cmd=2615d80a13c0db1f22d2300ef60a67593b79a4d03747447e6b625t28d36121s1cd82730257d4ffad785277a59c2209'
 # url4=url_list_2[0]
@@ -304,4 +304,57 @@ for url in dataset_phishing_url_modified:
     path_length(url)
     
 
+#----------------------Delimeter Domain------------------------------------------------
+data_initial_13['delimeter_Domain'].value_counts()
+delimiter_list=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>' ]
 
+
+index9=0
+def delimiter_count(url):
+    count=0
+    global index9
+    content=url.split('/')
+    for x in delimiter_list:
+        if x in content[2]:
+            count=count+1
+    
+    dataset_13['delimeter_Domain'].iloc[index9]=count
+    index9=index9+1
+    
+for url in dataset_phishing_url_modified:
+    delimiter_count(url)
+
+dataset_13['delimeter_Domain'].value_counts()       #I may have done mistake here.
+
+
+#----------------------Delimeter Path--------------------------------
+index10=0
+def delimiter_path_count(url):
+    count=0
+    global index10
+    content=temp_url.split('/')
+    length_of_content=len(content)
+    
+    for x in range(3,length_of_content):
+        for delimeter in delimiter_list:
+            if delimeter in content[x]:
+                count=count+1
+    
+    dataset_13['delimeter_path'].iloc[index10]=count
+    index10=index10+1
+    
+for url in dataset_phishing_url_modified:
+    delimiter_path_count(url)
+    
+
+# for url in dataset_phishing_url_modified:
+#     if 'file' in url:
+#         count=count+1
+        
+# data_initial_13['fileNameLen'].value_counts()
+temp_url=dataset_phishing_url_modified[1]
+
+
+
+    
+    
