@@ -306,17 +306,19 @@ for url in dataset_phishing_url_modified:
 
 #----------------------Delimeter Domain------------------------------------------------
 data_initial_13['delimeter_Domain'].value_counts()
-delimiter_list=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>' ]
+delimiter_list1=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>' ]
 
 
 index9=0
 def delimiter_count(url):
     count=0
     global index9
-    content=url.split('/')
-    for x in delimiter_list:
-        if x in content[2]:
-            count=count+1
+    content=url3.split('/')
+    
+    for x in range(0,3):
+        for delimeter in delimiter_list1:
+            if delimeter in content[x]:
+                count=count+1
     
     dataset_13['delimeter_Domain'].iloc[index9]=count
     index9=index9+1
@@ -325,14 +327,17 @@ for url in dataset_phishing_url_modified:
     delimiter_count(url)
 
 dataset_13['delimeter_Domain'].value_counts()       #I may have done mistake here.
+data_initial_13['delimeter_Domain'].value_counts()
 
 
 #----------------------Delimeter Path--------------------------------
+#The symbol in a delimiter list is called a bag of words. For this two delimiter propertie look for paer no 15
+delimiter_list=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>','?','=','-','_' ]
 index10=0
 def delimiter_path_count(url):
     count=0
     global index10
-    content=temp_url.split('/')
+    content=url.split('/')
     length_of_content=len(content)
     
     for x in range(3,length_of_content):
@@ -347,14 +352,11 @@ for url in dataset_phishing_url_modified:
     delimiter_path_count(url)
     
 
-# for url in dataset_phishing_url_modified:
-#     if 'file' in url:
-#         count=count+1
-        
-# data_initial_13['fileNameLen'].value_counts()
-temp_url=dataset_phishing_url_modified[1]
+#---------------------------------symbol count domain-------------------------
+sybol_list=['']
 
-
+for x in range(3,8):
+    print(x)
 
     
     
