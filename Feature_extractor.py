@@ -306,18 +306,18 @@ for url in dataset_phishing_url_modified:
 
 #----------------------Delimeter Domain------------------------------------------------
 data_initial_13['delimeter_Domain'].value_counts()
-delimiter_list1=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>' ]
+delimiter_list=['.',',' , ';' , '{' , '}' , '|' , '/' , '+','#','%','<','>','~','(',')' , '[' , ']' , '<' , '>' , '"','<?' , '?>', '/*' , '*/' , '<%', '%>' ]
 
 
 index9=0
 def delimiter_count(url):
     count=0
     global index9
-    content=url3.split('/')
+    content=url.split('/')
     
     for x in range(0,3):
-        for delimeter in delimiter_list1:
-            if delimeter in content[x]:
+        for char in content[x]:
+            if char in delimiter_list:
                 count=count+1
     
     dataset_13['delimeter_Domain'].iloc[index9]=count
@@ -328,6 +328,7 @@ for url in dataset_phishing_url_modified:
 
 dataset_13['delimeter_Domain'].value_counts()       #I may have done mistake here.
 data_initial_13['delimeter_Domain'].value_counts()
+
 
 
 #----------------------Delimeter Path--------------------------------
@@ -341,8 +342,8 @@ def delimiter_path_count(url):
     length_of_content=len(content)
     
     for x in range(3,length_of_content):
-        for delimeter in delimiter_list:
-            if delimeter in content[x]:
+        for char in content[x]:
+            if char in delimiter_list:
                 count=count+1
     
     dataset_13['delimeter_path'].iloc[index10]=count
@@ -353,10 +354,7 @@ for url in dataset_phishing_url_modified:
     
 
 #---------------------------------symbol count domain-------------------------
-sybol_list=['']
+symbol_list=['']
 
-for x in range(3,8):
-    print(x)
 
-    
-    
+ 
