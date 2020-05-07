@@ -354,7 +354,29 @@ for url in dataset_phishing_url_modified:
     
 
 #---------------------------------symbol count domain-------------------------
-symbol_list=['']
+symbol_list=['@',':','//','/','?',',','=',';','(',')','+','[',']']
+
+index11=0
+def domain_symbol_count(url):
+    count=0
+    global index11
+    content=url.split('/')
+    domain_name=content[2]
+    
+    for char in domain_name:
+        if char in symbol_list:
+                count=count+1
+    
+    dataset_13['SymbolCount_Domain'].iloc[index11]=count
+    index11=index11+1
+    
+for url in dataset_phishing_url_modified:
+    domain_symbol_count(url)
+
+dataset_13['SymbolCount_Domain'].value_counts()       #I may have done mistake here.
+data_initial_13['SymbolCount_Domain'].value_counts()
+
+
 
 
  
