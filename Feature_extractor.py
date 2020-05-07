@@ -369,7 +369,8 @@ def domain_symbol_count(url):
     
     dataset_13['SymbolCount_Domain'].iloc[index11]=count
     index11=index11+1
-    
+
+#creating a datset
 for url in dataset_phishing_url_modified:
     domain_symbol_count(url)
 
@@ -377,6 +378,30 @@ dataset_13['SymbolCount_Domain'].value_counts()       #I may have done mistake h
 data_initial_13['SymbolCount_Domain'].value_counts()
 
 
+#------------------Calculating domain entropy via shanon entropy---------------------------
+index12=0
+from scipy.stats import entropy
+
+def shanon_entropy(url):
+    global index12
+    content=url.split('/')
+    domain_name=content[2]
+
+    data_list=[]
+    for char in domain_name:
+        data_list.append(char)
+    
+    data_series=pd.Series(data_list)
+    counts=data_series.value_counts()
+    entropy_calculated=entropy(counts)
+    
+    dataset_13['Entropy_Domain'].iloc[index12]=entropy_calculated
+    index12=index12+1
+
+#creating a dataset
+for url in dataset_phishing_url_modified:
+    shanon_entropy(url)
+    
 
 
- 
+
