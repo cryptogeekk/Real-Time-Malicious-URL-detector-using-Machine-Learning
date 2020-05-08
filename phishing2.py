@@ -83,7 +83,7 @@ train_y_svm=train_y
 test_y_svm=test_y
     #for other types of classification
 train_y=pd.get_dummies(train_y)
-train_y_binary=pd.get_dummies(train_y_binary)
+# train_y_binary=pd.get_dummies(train_y_binary)
 # train_y_binary=train_y_svm['benign']
 test_y=pd.get_dummies(test_y)
 # test_y_binary_num=pd.get_dummies(test_y_binary)
@@ -187,9 +187,32 @@ f1_svm_poly=f1_score(test_y,svm_poly_predicted,average='micro')
 
 
 #Using K nearest Neighbours for classification
+from sklearn.neighbors import KNeighborsClassifier
+knc_clf=KNeighborsClassifier(leaf_size=10,n_neighbors=5,p=2)
+knc_clf.fit(train_x,train_y)
+knc_clf_predicted=knc_clf.predict(test_x)
+
+from sklearn.metrics import confusion_matrix,precision_score,f1_score
+knc_clf_confusion_matrix=confusion_matrix(test_y.values.argmax(axis=1),knc_clf_predicted.argmax(axis=1))
+precision_knn_clf=precision_score(test_y,knc_clf_predicted,average='micro')     #gives 99.04 percent of accuracy
+precision_knn_clf_all=precision_score(test_y,knc_clf_predicted,average=None)   #gives 98.37 and 99.70 percent of accuracy
 
 
+#Hyperparameter tuning for KNeighbour classifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+knc_clf=KNeighborsClassifier(n_jobs=-1)
 
+   
+param_grid={'n_neighbors':[5,10,15,20],'leaf_size':[10,20,30,40,50,70,90],'p':[1,2]}
+grid_search=GridSearchCV(knc_clf,param_grid,cv=5,scoring='neg_mean_squared_error',return_train_score=True)
+grid_search.fit(train_x,train_y)
+grid_search.best_params_
+cvres=grid_search.cv_results_
+for mean_score,params in zip(cvres['mean_test_score'],cvres['params']):
+    print(np.sqrt(-mean_score),params)
+    
+knc_clf.get_params().keys()
 
 
 
